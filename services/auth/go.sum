@@ -1,8 +1,8 @@
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/BurntSushi/toml v1.5.0 h1:W5quZX/G/csjUnuI8SUYlsHs9M38FC7znL0lIO+DvMg=
 github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
-github.com/LexusEgorov/go-secure-storage-protos v0.0.0-20250413171557-20a8cb0c6739 h1:3f42yjubOP2B5fw7Sc7IST2z5m1lv0lcTdC8Wb136bQ=
-github.com/LexusEgorov/go-secure-storage-protos v0.0.0-20250413171557-20a8cb0c6739/go.mod h1:7iJ3s8Q8/yC8xCqgma67vnlvKPSXvfbSyx6hgm2Tdjg=
+github.com/LexusEgorov/go-secure-storage-protos v1.0.2 h1:xg5gCjlKRxbifctvqS5uzM1N4t//LarG/CjDXutVLnA=
+github.com/LexusEgorov/go-secure-storage-protos v1.0.2/go.mod h1:M8uqUSVbfRiv2ZCDl0pCm0ALCpGe+KNO7fCISyBzUn0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
