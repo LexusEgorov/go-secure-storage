@@ -1,58 +1,72 @@
-package authgrpc
+package grpcserv
 
 import (
 	"context"
-	"errors"
-
-	"google.golang.org/grpc"
+	"fmt"
+	"net"
 
 	"github.com/LexusEgorov/go-secure-storage-protos/gen/golang/authpb"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-type serverAPI struct {
+type AuthProvider interface{}
+
+type Server struct {
 	authpb.UnimplementedAuthServer
-	auth Auth
+	l    *logrus.Logger
+	s    *grpc.Server
+	auth AuthProvider
 }
 
-type Auth interface {
-	Register(context.Context, *authpb.RegisterRequest) (*authpb.RegisterResponse, error)
-	Login(context.Context, *authpb.LoginRequest) (*authpb.LoginResponse, error)
-	ValidateToken(context.Context, *authpb.ValidateTokenRequest) (*authpb.ValidateTokenResponse, error)
-	Refresh(context.Context, *authpb.RefreshRequest) (*authpb.RefreshResponse, error)
+func NewServer(l *logrus.Logger, auth AuthProvider) *Server {
+	grpcServer := grpc.NewServer()
+
+	server := Server{
+		l:    l,
+		s:    grpcServer,
+		auth: auth,
+	}
+
+	authpb.RegisterAuthServer(grpcServer, server)
+
+	return &server
 }
 
-func Register(grpcServer *grpc.Server) {
-	authpb.RegisterAuthServer(grpcServer, serverAPI{})
+func (s Server) RunServer(port int) error {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+
+	if err != nil {
+		s.l.Panic(err)
+		return err
+	}
+
+	s.l.Info("server is running on ", port, " port")
+
+	if err := s.s.Serve(lis); err != nil {
+		s.l.Panic(err)
+		return err
+	}
+
+	return nil
 }
 
-func (s serverAPI) Register(
-	ctx context.Context,
-	reg *authpb.RegisterRequest,
-) (*authpb.RegisterResponse, error) {
-	//TODO
-	return nil, errors.New("unimplemented")
+func (s Server) Register(ctx context.Context, req *authpb.RegisterRequest) (*authpb.RegisterResponse, error) {
+	s.l.Info("register: ", req)
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 
-func (s serverAPI) Login(
-	ctx context.Context,
-	login *authpb.LoginRequest,
-) (*authpb.LoginResponse, error) {
-	//TODO
-	return nil, errors.New("unimplemented")
+func (s Server) Login(ctx context.Context, req *authpb.LoginRequest) (*authpb.LoginResponse, error) {
+	s.l.Info("login: ", req)
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-
-func (s serverAPI) ValidateToken(
-	ctx context.Context,
-	token *authpb.ValidateTokenRequest,
-) (*authpb.ValidateTokenResponse, error) {
-	//TODO
-	return nil, errors.New("unimplemented")
+func (s Server) ValidateToken(ctx context.Context, req *authpb.ValidateTokenRequest) (*authpb.ValidateTokenResponse, error) {
+	s.l.Info("validate: ", req)
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
 }
-
-func (s serverAPI) Refresh(
-	ctx context.Context,
-	refresh *authpb.RefreshRequest,
-) (*authpb.RefreshResponse, error) {
-	//TODO
-	return nil, errors.New("unimplemented")
+func (s Server) Refresh(ctx context.Context, req *authpb.RefreshRequest) (*authpb.RefreshResponse, error) {
+	s.l.Info("refresh: ", req)
+	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
 }

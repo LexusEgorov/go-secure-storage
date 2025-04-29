@@ -1,19 +1,29 @@
 package app
 
 import (
-	grpcapp "auth/internal/app/grpc"
+	grpcserv "auth/internal/grpc"
 
 	"github.com/sirupsen/logrus"
 )
 
 type App struct {
-	GRPCServer *grpcapp.App
+	l    *logrus.Logger
+	s    grpcserv.Server
+	port int
 }
 
-func New(log *logrus.Logger, port int) *App {
-	gRPCServer := grpcapp.New(log, port)
-
+func New(logger *logrus.Logger, port int, authProvider grpcserv.AuthProvider) *App {
 	return &App{
-		GRPCServer: gRPCServer,
+		l:    logger,
+		s:    *grpcserv.NewServer(logger, authProvider),
+		port: port,
+	}
+}
+
+func (a App) MustRun() {
+	err := a.s.RunServer(a.port)
+
+	if err != nil {
+		panic(err)
 	}
 }
