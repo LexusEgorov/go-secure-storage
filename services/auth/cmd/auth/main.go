@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+
 	cfg := config.MustLoad()
 	logger := logger.Init(cfg.Env)
 	DBStorage := storage.NewDB("")
