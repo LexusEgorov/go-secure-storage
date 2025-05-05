@@ -1,0 +1,5 @@
+env: "local"
+db_connect: "postgresql://root:root@db-auth:5432/auth_db?sslmode=disable"
+grpc:
+  port: 44045
+  timeout: 1h

@@ -1,0 +1,5 @@
+env: "local"
+db_connect: "123"
+grpc:
+  port: 44044
+  timeout: 1h

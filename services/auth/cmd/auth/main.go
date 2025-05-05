@@ -12,7 +12,7 @@ func main() {
 
 	cfg := config.MustLoad()
 	logger := logger.Init(cfg.Env)
-	DBStorage := storage.NewDB("")
+	DBStorage := storage.NewDB(cfg.DBConnect)
 	authProvider := auth.NewAuth(DBStorage)
 
 	application := app.New(logger, cfg.GRPC.Port, authProvider)
