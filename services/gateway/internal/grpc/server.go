@@ -3,10 +3,14 @@ package grpcsrv
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net"
 
 	"github.com/LexusEgorov/go-secure-storage-protos/gen/golang/authpb"
 	"github.com/LexusEgorov/go-secure-storage-protos/gen/golang/datapb"
+	"github.com/LexusEgorov/go-secure-storage-protos/gen/golang/gatewaypb"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -14,6 +18,7 @@ type Server struct {
 	authClient authpb.AuthClient
 	dataClient datapb.DataClient
 	l          *logrus.Logger
+	s          *grpc.Server
 }
 
 func (s Server) Register(ctx context.Context, req *authpb.RegisterRequest) (*authpb.RegisterResponse, error) {
@@ -83,4 +88,49 @@ func (s Server) Get(ctx context.Context, req *datapb.GetRequest) (*datapb.GetRes
 	}
 
 	return s.dataClient.Get(ctx, req)
+}
+
+func NewServer(l *logrus.Logger, authConn, dataConn string) *Server {
+	grpcServer := grpc.NewServer()
+
+	connAuth, err := grpc.NewClient(authConn)
+
+	if err != nil {
+		panic(err)
+	}
+
+	connData, err := grpc.NewClient(dataConn)
+
+	if err != nil {
+		panic(err)
+	}
+
+	server := Server{
+		authClient: authpb.NewAuthClient(connAuth),
+		dataClient: datapb.NewDataClient(connData),
+		l:          l,
+		s:          grpcServer,
+	}
+
+	gatewaypb.RegisterGatewayServer(grpcServer, server)
+
+	return &server
+}
+
+func (s Server) RunServer(port int) error {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+
+	if err != nil {
+		s.l.Panic(err)
+		return err
+	}
+
+	s.l.Info("server is running on ", port, " port")
+
+	if err := s.s.Serve(lis); err != nil {
+		s.l.Panic(err)
+		return err
+	}
+
+	return nil
 }
