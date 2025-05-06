@@ -1,7 +1,7 @@
 package app
 
 import (
-	grpcserv "auth/internal/grpc"
+	grpcserv "gateway/internal/grpc"
 
 	"github.com/sirupsen/logrus"
 )
@@ -12,10 +12,10 @@ type App struct {
 	port int
 }
 
-func New(logger *logrus.Logger, port int, authProvider grpcserv.AuthProvider) *App {
+func New(logger *logrus.Logger, port int, auth, data string) *App {
 	return &App{
 		l:    logger,
-		s:    *grpcserv.NewServer(logger, authProvider),
+		s:    *grpcserv.NewServer(logger, auth, data),
 		port: port,
 	}
 }

@@ -1,0 +1,61 @@
+services:
+  db-auth:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+      POSTGRES_USER: ${AUTH_DB_USER}
+      POSTGRES_DB: ${AUTH_DB_NAME}
+    ports:
+      - 44044:5432
+    volumes:
+      - db-auth:/var/lib/postgresql/data
+  db-data:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: ${DATA_DB_PASSWORD}
+      POSTGRES_USER: ${DATA_DB_USER}
+      POSTGRES_DB: ${DATA_DB_NAME}
+    ports:
+      - 44045:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  auth:
+    image: diplom_auth_service
+    build:
+      context: ./services/auth
+    depends_on:
+      - db-auth
+    environment:
+      CONFIG_PATH: ${AUTH_CONFIG_PATH}
+    volumes:
+      - ./config:/app/configurations
+    ports:
+      - 44046:44045
+  data:
+    image: diplom_data_service
+    build:
+      context: ./services/data
+    depends_on:
+      - db-data
+    environment:
+      CONFIG_PATH: ${DATA_CONFIG_PATH}
+    volumes:
+      - ./config:/app/configurations
+    ports:
+      - 44047:44045
+  gateway:
+    image: diplom_gateway_service
+    build:
+      context: ./services/data
+    depends_on:
+      - data
+      - auth
+    environment:
+      CONFIG_PATH: ${DATA_CONFIG_PATH}
+    volumes:
+      - ./config:/app/configurations
+    ports:
+      - 44048:44045
+volumes:
+  db-auth:
+  db-data:
